@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>SAP API 테스트 결과</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: #f0f4f8;
+            margin: 0;
+            padding: 2rem;
+            color: #333;
+        }
+
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 1.5rem;
+        }
+
+        form, a {
+            display: inline-block;
+            margin-right: 1rem;
+        }
+
+        form label {
+            margin-right: 0.5rem;
+            font-weight: 500;
+        }
+
+        input[type="number"] {
+            padding: 0.3rem;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            width: 60px;
+        }
+
+        button {
+            background: #3498db;
+            color: #fff;
+            border: none;
+            padding: 0.4rem 0.8rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: background 0.3s;
+        }
+
+        button:hover {
+            background: #2980b9;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1.5rem;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 0.6rem 0.8rem;
+            text-align: center;
+        }
+
+        th {
+            background-color: #3498db;
+            color: #fff;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        .pagination {
+            margin-top: 1rem;
+        }
+
+        .pagination span {
+            font-weight: 500;
+            margin-right: 0.8rem;
+        }
+
+        .pagination a {
+            margin-right: 0.5rem;
+            color: #3498db;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .pagination a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+<h1>SAP API 테스트 결과</h1>
+
+<!-- 사용자 생성 버튼: 개수 입력 -->
+<form th:action="@{/generate-employees}" method="get">
+    <label>생성할 사용자 수:
+        <input type="number" name="count" min="1" value="10">
+    </label>
+    <button type="submit">Mock 사용자 생성</button>
+</form>
+
+<!-- CSV 다운로드 버튼 -->
+<a href="/download/employees">
+    <button type="button">CSV 다운로드</button>
+</a>
+
+<!-- 사용자 추가 버튼 -->
+<a href="/add">
+    <button type="button">사용자 추가</button>
+</a>
+
+<table>
+    <thead>
+    <tr>
+        <th>PERNR</th>
+        <th>ENAME</th>
+        <th>ORGEH</th>
+        <th>PLANS</th>
+        <th>EMAIL</th>
+        <th>BEGDA</th>
+        <th>ENDDA</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="emp : ${employeeList}">
+        <td th:text="${emp.pernr}"></td>
+        <td th:text="${emp.ename}"></td>
+        <td th:text="${emp.orgeh}"></td>
+        <td th:text="${emp.plans}"></td>
+        <td th:text="${emp.email}"></td>
+        <td th:text="${emp.begda}"></td>
+        <td th:text="${emp.endda}"></td>
+    </tr>
+    </tbody>
+</table>
+
+<!-- 페이징 -->
+<div class="pagination">
+    <span th:text="'Page: ' + ${currentPage}"></span>
+    <a th:href="@{/test-sap-api(page=${currentPage - 1}, size=${size})}" th:if="${currentPage > 1}">이전</a>
+    <a th:href="@{/test-sap-api(page=${currentPage + 1}, size=${size})}">다음</a>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>사용자 추가</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: #f0f4f8;
+            margin: 0;
+            padding: 2rem;
+            color: #333;
+        }
+
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 1.5rem;
+        }
+
+        form {
+            background: #fff;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: #555;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="date"],
+        input[type="number"] {
+            width: 100%;
+            padding: 0.4rem;
+            margin-bottom: 1rem;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        button {
+            background: #3498db;
+            color: #fff;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: background 0.3s;
+            margin-right: 0.5rem;
+        }
+
+        button:hover {
+            background: #2980b9;
+        }
+    </style>
+</head>
+<body>
+
+<h1>사용자 추가</h1>
+
+<form method="post" action="/add-employee">
+    <label>Employee ID: <input type="text" name="employeeId" readonly placeholder="서버에서 자동 생성됩니다"></label>
+    <label>First Name: <input type="text" name="firstName"></label>
+    <label>Last Name: <input type="text" name="lastName"></label>
+    <label>Middle Name: <input type="text" name="middleName"></label>
+    <label>Birth Date: <input type="date" name="birthDate"></label>
+    <label>Gender: <input type="text" name="gender"></label>
+    <label>Nationality: <input type="text" name="nationality"></label>
+    <label>Marital Status: <input type="text" name="maritalStatus"></label>
+    <label>Position: <input type="text" name="position"></label>
+    <label>Job Title: <input type="text" name="jobTitle"></label>
+    <label>Department: <input type="text" name="department"></label>
+    <label>Department Name: <input type="text" name="departmentName"></label>
+    <label>Hire Date: <input type="date" name="hireDate"></label>
+    <label>Termination Date: <input type="date" name="terminationDate"></label>
+    <label>Work Email: <input type="email" name="workEmail"></label>
+    <label>Work Phone: <input type="text" name="workPhone"></label>
+    <label>Mobile Phone: <input type="text" name="mobilePhone"></label>
+    <label>Address: <input type="text" name="address"></label>
+    <label>Bank Account: <input type="text" name="bankAccount"></label>
+    <label>Tax ID: <input type="text" name="taxId"></label>
+
+    <button type="submit">사용자 추가</button>
+    <button type="button" onclick="fillRandom()">랜덤값 채우기</button>
+</form>
+
+<script>
+    const surnames = ["김", "이", "박", "최", "정", "강", "조", "윤", "장", "임"];
+    const nameChars = ["가", "나", "다", "라", "마", "바", "사", "아", "자", "차", "카", "타", "파", "하"];
+
+    function randomKoreanName() {
+        const surname = surnames[Math.floor(Math.random() * surnames.length)];
+        const name = nameChars[Math.floor(Math.random() * nameChars.length)]
+            + nameChars[Math.floor(Math.random() * nameChars.length)];
+        return { firstName: name, lastName: surname };
+    }
+
+    function fillRandom() {
+        const { firstName, lastName } = randomKoreanName();
+        const randomString = () => Math.random().toString(36).substring(2, 8);
+        const randomDate = () => {
+            const start = new Date(1960, 0, 1);
+            const end = new Date();
+            const date = new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));
+            return date.toISOString().slice(0, 10);
+        };
+        const form = document.querySelector("form");
+        form.employeeId.value = "";
+        form.firstName.value = firstName;
+        form.lastName.value = lastName;
+        form.middleName.value = "";
+        form.birthDate.value = randomDate();
+        form.gender.value = ["M", "F"][Math.floor(Math.random() * 2)];
+        form.nationality.value = "KR";
+        form.maritalStatus.value = ["Single", "Married"][Math.floor(Math.random() * 2)];
+        form.position.value = "Staff";
+        form.jobTitle.value = "Developer";
+        form.department.value = "1001";
+        form.departmentName.value = "IT";
+        form.hireDate.value = randomDate();
+        form.terminationDate.value = "";
+        form.workEmail.value = randomString() + "@company.com";
+        form.workPhone.value = "02-" + Math.floor(Math.random() * 10000) + "-" + Math.floor(Math.random() * 10000);
+        form.mobilePhone.value = "010-" + Math.floor(Math.random() * 10000) + "-" + Math.floor(Math.random() * 10000);
+        form.address.value = "서울시 " + randomString();
+        form.bankAccount.value = Math.floor(Math.random() * 1000000000000);
+        form.taxId.value = Math.floor(Math.random() * 1000000000);
+    }
+</script>
+
+</body>
+</html>
