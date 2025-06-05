@@ -28,20 +28,17 @@ public class EmployeeDownloadController {
     @Value("${sap.mock.download-api}")
     private String downloadApi;
 
-    // ✅ 공통 인증 헤더 생성 메서드
-    private HttpHeaders createAuthHeaders() {
-        String base64Creds = Base64.getEncoder().encodeToString(sapMockAuth.getBytes(StandardCharsets.UTF_8));
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", "Basic " + base64Creds);
-        return headers;
-    }
-
     @GetMapping("/download/employees")
     public void proxyDownloadCsv(HttpServletResponse response) throws Exception {
         String sapCsvUrl = baseUrl + downloadApi;
 
-        // ✅ 공통 메서드 사용
-        HttpEntity<String> entity = new HttpEntity<>(createAuthHeaders());
+        // ✅ Basic Auth 헤더 추가
+        String base64Creds = Base64.getEncoder().encodeToString(sapMockAuth.getBytes(StandardCharsets.UTF_8));
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Basic " + base64Creds);
+
+        HttpEntity<String> entity = new HttpEntity<>(headers);
 
         ResponseEntity<byte[]> responseEntity = restTemplate.exchange(
                 sapCsvUrl,
