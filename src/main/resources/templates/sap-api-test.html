@@ -107,13 +107,17 @@
     <button type="submit">Mock 사용자 생성</button>
 </form>
 
-<!-- 사용자 ID 검색 -->
+<!-- 🔥 🔍 사용자 ID 검색 대신 $filter 검색 -->
 <form th:action="@{/test-sap-api}" method="get" style="margin-top: 1rem;">
-    <label>사용자 ID 검색:
-        <input type="text" name="employeeId" th:value="${employeeId}">
+    <label>$filter 조건:
+        <input type="text" name="filter" th:value="${filter}">
     </label>
     <button type="submit">검색</button>
 </form>
+
+<!-- 새로고침 버튼 -->
+<button type="button" onclick="location.href='/test-sap-api';">새로고침</button>
+
 
 <!-- 🔥 사용자 없음 메시지를 여기로 이동! -->
 <div th:if="${notFound}">
@@ -156,11 +160,11 @@
     </tbody>
 </table>
 
-<!-- 페이징 -->
+<!-- 페이징: $filter 유지 -->
 <div class="pagination">
     <span th:text="'Page: ' + ${currentPage}"></span>
-    <a th:href="@{/test-sap-api(page=${currentPage - 1}, size=${size})}" th:if="${currentPage > 1}">이전</a>
-    <a th:href="@{/test-sap-api(page=${currentPage + 1}, size=${size})}">다음</a>
+    <a th:href="@{/test-sap-api(page=${currentPage - 1}, size=${size}, filter=${filter})}" th:if="${currentPage > 1}">이전</a>
+    <a th:href="@{/test-sap-api(page=${currentPage + 1}, size=${size}, filter=${filter})}">다음</a>
 </div>
 
 <script>
