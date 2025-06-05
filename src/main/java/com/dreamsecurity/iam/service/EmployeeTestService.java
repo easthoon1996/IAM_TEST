@@ -14,14 +14,16 @@ import java.util.*;
 @Service
 public class EmployeeTestService {
 
-    private final RestTemplate restTemplate;
     private final ObjectMapper objectMapper;
 
     @Autowired
+    private RestTemplate restTemplate;
+
+    @Autowired
     public EmployeeTestService(RestTemplate restTemplate) {
-        this.restTemplate = restTemplate;
         this.objectMapper = new ObjectMapper();
     }
+
 
     /**
      * JSON 응답을 EmployeeDto 리스트로 변환

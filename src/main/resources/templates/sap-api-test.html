@@ -102,22 +102,21 @@
 <!-- 사용자 생성 버튼: 개수 입력 -->
 <form th:action="@{/generate-employees}" method="get">
     <label>생성할 사용자 수:
-        <input type="number" name="count" min="1" value="10">
+        <input type="number" name="count" min="1" th:value="${size}" />
     </label>
     <button type="submit">Mock 사용자 생성</button>
 </form>
 
 <!-- CSV 다운로드 버튼 -->
-<a href="/download/employees">
-    <button type="button">CSV 다운로드</button>
-</a>
+<button id="downloadCsvBtn" type="button">CSV 다운로드</button>
+
 
 <!-- 사용자 추가 버튼 -->
 <a href="/add">
     <button type="button">사용자 추가</button>
 </a>
 
-<table>
+<table id="userTable">
     <thead>
     <tr>
         <th>PERNR</th>
@@ -149,5 +148,36 @@
     <a th:href="@{/test-sap-api(page=${currentPage + 1}, size=${size})}">다음</a>
 </div>
 
+
+<script>
+    document.getElementById('downloadCsvBtn').addEventListener('click', function() {
+        const table = document.getElementById('userTable');
+        let csvContent = '';
+
+        // 헤더 추출
+        const headers = table.querySelectorAll('thead tr th');
+        const headerArray = Array.from(headers).map(th => `"${th.innerText}"`);
+        csvContent += headerArray.join(',') + '\n';
+
+        // 데이터 추출
+        const rows = table.querySelectorAll('tbody tr');
+        rows.forEach(row => {
+            const cols = row.querySelectorAll('td');
+            const rowArray = Array.from(cols).map(td => `"${td.innerText}"`);
+            csvContent += rowArray.join(',') + '\n';
+        });
+
+        // CSV 다운로드 트리거
+        const BOM = '\uFEFF'; // UTF-8 BOM
+        const blob = new Blob([BOM + csvContent], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'user_list.csv';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+    });
+</script>
 </body>
 </html>
