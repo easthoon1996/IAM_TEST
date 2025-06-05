@@ -24,7 +24,6 @@ public class EmployeeTestService {
         this.objectMapper = new ObjectMapper();
     }
 
-
     /**
      * JSON 응답을 EmployeeDto 리스트로 변환
      */
@@ -53,6 +52,7 @@ public class EmployeeTestService {
             dto.setPernr(node.path("employeeId").asText(""));
             dto.setEname(ename);
             dto.setOrgeh(node.path("department").asText(""));
+            dto.setOrgehName(node.path("departmentName").asText(""));
             dto.setPlans(node.path("jobTitle").asText(""));
             dto.setEmail(node.path("workEmail").asText(""));
             dto.setBegda(node.path("hireDate").asText(""));

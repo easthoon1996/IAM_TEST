@@ -48,8 +48,9 @@ public class EmployeeTestController {
 
     @GetMapping("/test-sap-api")
     public String testSapApi(
-            @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "-1") int size,
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(required = false) String employeeId,
             Model model
     ) throws Exception {
         if (size == -1) {
@@ -57,7 +58,16 @@ public class EmployeeTestController {
         }
 
         int skip = (page - 1) * size;
-        String apiUrl = String.format(baseUrl + employeesApi + "?$skip=%d&$top=%d", skip, size);
+
+        String apiUrl;
+        if (employeeId != null && !employeeId.trim().isEmpty()) {
+            // 사용자 ID 검색 API URL
+            // 예: ?userId=xxx
+            apiUrl = String.format(baseUrl + employeesApi + "/%s", employeeId);
+        } else {
+            // 기존 페이징 API URL
+            apiUrl = String.format(baseUrl + employeesApi + "?skip=%d&top=%d", skip, size);
+        }
 
         // 인증 헤더
         String base64Creds = Base64.getEncoder().encodeToString(sapMockAuth.getBytes(StandardCharsets.UTF_8));
@@ -67,19 +77,27 @@ public class EmployeeTestController {
 
         HttpEntity<String> entity = new HttpEntity<>(headers);
 
-        // 요청
         ResponseEntity<String> response = restTemplate.exchange(apiUrl, HttpMethod.GET, entity, String.class);
 
-        // JSON 응답을 EmployeeDto List로 변환
-        List<EmployeeDto> employeeList = employeeTestService.parseEmployeeResponse(response.getBody());
-        model.addAttribute("employeeList", employeeList);
+        if (response.getStatusCode() == HttpStatus.NOT_FOUND) {
+            // 🔥 404 응답 처리
+            model.addAttribute("employeeList", List.of());
+            model.addAttribute("notFound", true);
+        } else {
+            // 🔥 200 응답 처리
+            List<EmployeeDto> employeeList = employeeTestService.parseEmployeeResponse(response.getBody());
+            model.addAttribute("employeeList", employeeList);
+            model.addAttribute("notFound", false);
+        }
 
-        // 페이지 정보
+        // 페이지 정보 + 검색어 추가
         model.addAttribute("currentPage", page);
         model.addAttribute("size", size);
+        model.addAttribute("employeeId", employeeId);
 
         return "sap-api-test";
     }
+
 
     @GetMapping("/add")
     public String addEmployeeForm(Model model) {
@@ -121,9 +139,7 @@ public class EmployeeTestController {
             headers.set("Authorization", "Basic " + base64Creds);
             headers.setContentType(MediaType.APPLICATION_JSON); // ✅ JSON 요청 명시
 
-            // 🔥 EmployeeFormDto를 그대로 JSON 요청으로 전송
             HttpEntity<EmployeeFormDto> request = new HttpEntity<>(employeeForm, headers);
-
             ResponseEntity<String> response = restTemplate.postForEntity(sapMockUrl, request, String.class);
 
             // 응답 로깅

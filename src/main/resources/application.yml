@@ -1,0 +1,9 @@
+sap:
+  fieldMapping:
+    pernr: employeeId
+    ename: firstName
+    orgeh: department
+    plans: jobTitle
+    email: workEmail
+    begda: hireDate
+    endda: terminationDate

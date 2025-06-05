@@ -7,11 +7,26 @@ public class EmployeeDto {
     private String pernr;
     @JsonProperty("firstName")
     private String ename;
+    @JsonProperty("department")
     private String orgeh;
+    @JsonProperty("departmentName")
+    private String orgehName;
+    @JsonProperty("jobTitle")
     private String plans;
+    @JsonProperty("workEmail")
     private String email;
+    @JsonProperty("hireDate")
     private String begda;
+    @JsonProperty("terminationDate")
     private String endda;
+
+    public String getOrgehName() {
+        return orgehName;
+    }
+
+    public void setOrgehName(String orgehName) {
+        this.orgehName = orgehName;
+    }
 
     public String getPernr() {
         return pernr;
